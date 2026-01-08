@@ -1,4 +1,4 @@
 -- @ScriptType: ModuleScript
-local module = {}
+local Properties = {}
 
-return module
+return Properties
