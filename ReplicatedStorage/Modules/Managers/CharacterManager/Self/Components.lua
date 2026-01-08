@@ -3,21 +3,37 @@ local CharacterTypecasts = require "../Typecasts"
 local TableUtil = require "../../../Utils/TableUtil"
 
 local Components:CharacterTypecasts.ComponentSystem = {}
+local ComponentModules = {
+	Input = require(script.Input)
+}
 local ComponentTypes = {
 	"InputData",
 }
+function Components.Add(Object: CharacterTypecasts.CharacterObject, ComponentName: string)
 
-function Components.Call(Object:CharacterTypecasts.CharacterObject,Component:string,...)
-	local Module = script:FindFirstChild(Component)
-	if not (Module and Module:IsA("ModuleScript")) then return end
-	return require(Module)(Object,...)
+	local Module = ComponentModules[ComponentName]
+	if not Module then 
+		warn("Component does not exist:", ComponentName)
+		return 
+	end
+
+	-- Create the data
+	local data = Module.new()
+
+	-- Attach it to the object (using the name as the key)
+	Object[ComponentName] = data
+
+	return data
+end
+
+-- 3. Optional: A Remove function
+function Components.Remove(Object: CharacterTypecasts.CharacterObject, ComponentName: string)
+	if Object[ComponentName] then
+		Object[ComponentName] = nil
+	end
 end
 
 
-function Components.Remove(Object:CharacterTypecasts.CharacterObject,Component:string)
-	Object.Components[Component] = nil
-	
-end
 
 
 return Components
