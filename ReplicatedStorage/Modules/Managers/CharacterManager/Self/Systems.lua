@@ -4,21 +4,39 @@ local RunService = game:GetService("RunService")
 local CharacterTypecasts = require "../Typecasts"
 local TableUtil = require "../../../Utils/TableUtil"
 
-local Systems = {}
+local Systems = {
+	
+}
+local CurrentSystems = {
+	InputData = require(script.InputData)
+}
+type CurrentSystems = typeof(CurrentSystems)
 
+function FetchModule(Name:string)
 
-function Systems.Connect(Object:CharacterTypecasts.CharacterObject,Component:string)
-	local Module = script:FindFirstChild(Component)
-	if not (Module and Module:IsA("ModuleScript")) then return end
-	local RequiredModule = require(Module)
+	return CurrentSystems[Name]
+end
+
+function Systems.Connect(Object:CharacterTypecasts.CharacterObject,System:string)
+	local RequiredModule = FetchModule(System)
+	if not RequiredModule then return end
 	RequiredModule.Connect(Object)
 end
 
 
-function Systems.Remove(Object:CharacterTypecasts.CharacterObject,Component:string)
-	Object.Components[Component] = nil
+function Systems.Remove(Object:CharacterTypecasts.CharacterObject,System:string)
+	local RequiredModule = FetchModule(System)
+	if not RequiredModule then return end
+	RequiredModule.Remove(Object)
 
 end
+
+function Systems.Call(Object:CharacterTypecasts.CharacterObject,System:string,Func:string,...)
+	local RequiredModule = FetchModule(System)
+	if not RequiredModule then return end
+	RequiredModule[Func](Object,...)
+end
+
 
 local function SystemAdded(System:ModuleScript)
 	if not System:IsA("ModuleScript") then return end
