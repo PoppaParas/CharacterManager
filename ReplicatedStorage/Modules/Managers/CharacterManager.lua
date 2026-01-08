@@ -54,6 +54,10 @@ function CharacterObject:CallComponent(Component:keyof<CharacterTypecasts.Compon
 	return Components.Call(self,Component,...)
 end
 
+function CharacterObject:CallSystem(System:keyof<CharacterTypecasts.Systems>,Name:string,...)
+	return Components.Call(self,System,...)
+end
+
 
 
 return CharacterManager
